@@ -1,4 +1,4 @@
-import math
+import math, random
 
 def find_primes(max_num):
     """
@@ -25,5 +25,13 @@ def find_primes(max_num):
 
     return primes
 
+def isPrime(p, max_tests):
+    for i in range(1, max_tests):
+        n = random.randint(1, p - 1)
+        if (pow(n, p - 1)) % p != 1:
+            return False
+    return True
+
 if __name__ == '__main__':
     print(find_primes(100))
+    print(isPrime(97, 50))
