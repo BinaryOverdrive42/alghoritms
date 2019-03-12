@@ -2,6 +2,7 @@ import math, random
 
 def find_primes(max_num):
     """
+    Sieve of Eratosthenes
     O(n * log( log(n) ))
     """
     is_composite = [False] * (max_num + 1)
