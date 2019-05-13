@@ -12,6 +12,7 @@ def trapezoid_numerical_integration(func, xmin, xmax, num_intervals):
     i = 1
     while i < num_intervals:
         total_area += dx * (func(x) + func(x+dx)) / 2
+        x += dx
         i += 1
 
     return total_area
