@@ -24,3 +24,10 @@ assert new_cell.next == finded_cell
 assert new_cell.prev == cell2
 print(list)
 
+new_list = list.copy()
+print(new_list)
+
+new_cell3 = new_list.find_cell(3)
+new_cell2 = new_list.find_cell(2)
+assert new_cell3.next == new_cell2
+assert new_cell3.prev == new_list.top

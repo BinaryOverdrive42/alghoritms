@@ -52,6 +52,15 @@ class IntegerList:
 
         return None
 
+    def copy(self):
+        new_list = IntegerList()
+        cell = self.top.next
+        while cell != self.end:
+            new_list.push(cell.value)
+            cell = cell.next
+
+        return new_list
+
 
     def __repr__(self):
         cell = self.top.next
