@@ -31,3 +31,24 @@ new_cell3 = new_list.find_cell(3)
 new_cell2 = new_list.find_cell(2)
 assert new_cell3.next == new_cell2
 assert new_cell3.prev == new_list.top
+
+sorted_list = list.insertion_sort()
+print(sorted_list)
+assert sorted_list.top.next.value == 1
+cell1 = sorted_list.top.next
+cell2 = cell1.next
+cell3 = cell2.next
+cell4 = cell3.next
+cell5 = cell4.next
+cell6 = cell5.next
+
+assert cell1.next.value == 2
+assert cell1.prev.value == None
+assert cell2.next.value == 3
+assert cell2.prev.value == 1
+assert cell3.next.value == 4
+assert cell3.prev.value == 2
+assert cell4.next.value == 5
+assert cell4.prev.value == 3
+assert cell5.next.value == 22
+assert cell5.prev.value == 4

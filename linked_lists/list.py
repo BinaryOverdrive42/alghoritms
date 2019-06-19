@@ -61,6 +61,30 @@ class IntegerList:
 
         return new_list
 
+    def insertion_sort(self):
+        new_list = IntegerList()
+        sentinel = new_list.top
+
+        input_cell = self.top.next
+        while input_cell is not self.end:
+            next_cell = input_cell
+            input_cell = input_cell.next
+
+            after_me = sentinel
+            while after_me.next != new_list.end \
+                and after_me.next.value < next_cell.value:
+                after_me = after_me.next
+
+            afn = after_me.next
+            after_me.next = IntegerCell(
+                next_cell.value,
+                after_me.next,
+                after_me
+            )
+            afn.prev = after_me.next
+            
+        return new_list
+
 
     def __repr__(self):
         cell = self.top.next
