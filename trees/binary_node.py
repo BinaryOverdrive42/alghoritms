@@ -3,12 +3,96 @@ from queue import Queue
 
 
 class BinaryNode:
+    node_radius = 20
+    x_spacing = 20
+    y_spacing = 20
+
     left_child: 'BinaryNode' = None
     right_child: 'BinaryNode' = None
 
     def __init__(self, index: int, data: Optional[str] = None):
         self.data = data
         self.index = index
+
+        self.center = (0, 0)
+        self.subtree_bounds = (
+            self.center[0] - BinaryNode.node_radius,
+            self.center[1] - BinaryNode.node_radius,
+            self.center[0] + BinaryNode.node_radius,
+            self.center[1] + BinaryNode.node_radius,
+        )
+
+    def __repr__(self):
+        return "BinaryNode(index={})".format(self.index)
+
+    def position_subtree(self, x_min, y_min):
+        y_max = y_min + 2 * BinaryNode.node_radius
+        x_max = x_min
+
+        if (self.left_child is None) and (self.right_child is None):
+            x_max += 2 * BinaryNode.node_radius
+            self.subtree_bounds = (x_min, y_min, x_max, y_max)
+        else:
+            y_max += BinaryNode.y_spacing
+
+            subtree_bottom = y_max
+
+            if self.left_child:
+                self.left_child.position_subtree(x_max, y_max)
+
+                x_max = self.left_child.subtree_bounds[2]
+
+                if self.right_child:
+                    x_max += BinaryNode.x_spacing
+
+                subtree_bottom = self.left_child.subtree_bounds[3]
+
+            if self.right_child:
+                self.right_child.position_subtree(x_max, y_max)
+
+                x_max = self.right_child.subtree_bounds[2]
+
+                if self.right_child.subtree_bounds[3] > subtree_bottom:
+                    subtree_bottom = self.right_child.subtree_bounds[3]
+
+            y_max = subtree_bottom
+            self.subtree_bounds = (x_min, y_min, x_max, y_max)
+
+        cx = (self.subtree_bounds[0] + self.subtree_bounds[2]) / 2
+        cy = y_min + BinaryNode.node_radius
+        self.center = (cx, cy)
+
+    def draw_subtree_nodes(self, canvas, bg_color, fg_color):
+        x0 = self.center[0] - BinaryNode.node_radius
+        y0 = self.center[1] - BinaryNode.node_radius
+        x1 = self.center[0] + BinaryNode.node_radius
+        y1 = self.center[1] + BinaryNode.node_radius
+
+        canvas.create_oval(x0, y0, x1, y1, fill=bg_color, outline=fg_color)
+        canvas.create_text(self.center, text="{}:{}".format(self.index, self.data))
+
+        if self.left_child:
+            self.left_child.draw_subtree_nodes(canvas, bg_color, fg_color)
+        if self.right_child:
+            self.right_child.draw_subtree_nodes(canvas, bg_color, fg_color)
+
+    def draw_subtree_links(self, canvas, color):
+        if self.left_child:
+            self.left_child.draw_subtree_links(canvas, color)
+            canvas.create_line(
+                self.center[0],
+                self.center[1],
+                self.left_child.center[0],
+                self.left_child.center[1],
+            )
+        if self.right_child:
+            self.right_child.draw_subtree_links(canvas, color)
+            canvas.create_line(
+                self.center[0],
+                self.center[1],
+                self.right_child.center[0],
+                self.right_child.center[1]
+            )
 
     def add_node(self, index: int, data: Optional[str] = None) -> 'BinaryNode':
         """
@@ -30,6 +114,19 @@ class BinaryNode:
                 return self.right_child
             else:
                 self.right_child.add_node(index, data)
+
+    def find_node(self, index: int) -> Optional['BinaryNode']:
+        if index == self.index:
+            return self
+
+        if index < self.index:
+            if self.left_child is None:
+                return None
+            return self.left_child.find_node(index)
+        else:
+            if self.right_child is None:
+                return None
+            return self.right_child.find_node(index)
 
     def traverse_preorder(self, processor: Callable):
         """
