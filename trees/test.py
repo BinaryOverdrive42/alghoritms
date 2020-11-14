@@ -118,13 +118,15 @@ if __name__ == "__main__":
     test_add_node(root)
     test_find_node(root)
 
-    root_node = BinaryNode(data="A", index=1)
-    root_node.add_node(data="B", index=4)
-    root_node.add_node(data="C", index=3)
-    root_node.add_node(data="D", index=2)
-    root_node.traverse_inorder(
-        processor=lambda x: print(x.index)
-    )
-    print(root_node.find_node(index=3))
+    root_node = BinaryNode(data="A", index=8)
+    root_node.add_node(data="B", index=3)
+    root_node.add_node(data="C", index=10)
+    root_node.add_node(data="D", index=1)
+    root_node.add_node(data="D", index=6)
+    root_node.add_node(data="D", index=14)
+    root_node.add_node(data="D", index=4)
+    root_node.add_node(data="D", index=7)
+    root_node.add_node(data="D", index=13)
+    root_node.delete_node(3)
     AppWindow(root_node)
 

@@ -9,6 +9,7 @@ class BinaryNode:
 
     left_child: 'BinaryNode' = None
     right_child: 'BinaryNode' = None
+    parent: 'BinaryNode' = None
 
     def __init__(self, index: int, data: Optional[str] = None):
         self.data = data
@@ -94,6 +95,26 @@ class BinaryNode:
                 self.right_child.center[1]
             )
 
+    def minimum(self):
+        if not self.left_child:
+            return self
+        return self.left_child.minimum()
+
+    def maximum(self):
+        if not self.right_child:
+            return self
+        return self.right_child.maximum()
+
+    def next(self):
+        if self.right_child:
+            return self.right_child.minimum()
+        y = self.parent
+        x = self
+        while y and x == y.right_child:
+            x = y
+            y = y.parent
+        return y
+
     def add_node(self, index: int, data: Optional[str] = None) -> 'BinaryNode':
         """
         Adding a node to build an ordered tree.
@@ -105,12 +126,14 @@ class BinaryNode:
         if index < self.index:
             if not self.left_child:
                 self.left_child = BinaryNode(index, data)
+                self.left_child.parent = self
                 return self.left_child
             else:
                 self.left_child.add_node(index, data)
         else:
             if not self.right_child:
                 self.right_child = BinaryNode(index, data)
+                self.right_child.parent = self
                 return self.right_child
             else:
                 self.right_child.add_node(index, data)
@@ -127,6 +150,44 @@ class BinaryNode:
             if self.right_child is None:
                 return None
             return self.right_child.find_node(index)
+
+    def delete_node(self, index: int) -> Optional['BinaryNode']:
+        node = self.find_node(index)
+        parent = node.parent
+        if node is None:
+            return None
+        else:
+            if not node.right_child and not node.left_child:
+                if parent.right_child == node:
+                    parent.right_child = None
+                if parent.left_child == node:
+                    parent.left_child = None
+            elif not node.right_child or not node.left_child:
+                if not node.left_child:
+                    if parent.left_child == node:
+                        parent.left_child = node.right_child
+                    else:
+                        parent.right_child = node.right_child
+                    node.right_child.parent = parent
+                else:
+                    if parent.left_child == node:
+                        parent.left_child = node.left_child
+                    else:
+                        parent.right_child = node.left_child
+                    node.left_child.parent = parent
+            else:
+                successor = node.next()
+                node.index = successor.index
+                node.data = successor.data
+                if successor.parent.left_child == successor:
+                    successor.parent.left_child = successor.right_child
+                    if successor.right_child:
+                        successor.right_child.parent = successor.parent
+                else:
+                    successor.parent.right_child = successor.left_child
+                    if successor.left_child:
+                        successor.right_child.parent = successor.parent
+            return node
 
     def traverse_preorder(self, processor: Callable):
         """
